@@ -327,10 +327,10 @@ class MW
                 $perfil_usuario = $usuario_token->perfil;
             }
 
-            if($perfil_usuario == "encargado")
+            if($datos_token->exito && $perfil_usuario == "encargado")
             {
                 $api_respuesta = json_decode($contenidoAPI);
-                $array_autos = json_decode($api_respuesta->dato);
+                $array_autos = json_decode($api_respuesta->tabla);
 
                 foreach ($array_autos as $auto) {
                     unset($auto->id);
@@ -362,10 +362,10 @@ class MW
                 $perfil_usuario = $usuario_token->perfil;
             }
 
-            if($perfil_usuario == "empleado")
+            if($datos_token->exito && $perfil_usuario == "empleado")
             {
                 $api_respuesta = json_decode($contenidoAPI);
-                $array_autos = json_decode($api_respuesta->dato);
+                $array_autos = json_decode($api_respuesta->tabla);
 
                 $colores = [];
 
@@ -406,7 +406,7 @@ class MW
 
             if ($perfil_usuario == "propietario") {
                 $api_respuesta = json_decode($contenidoAPI);
-                $array_autos = json_decode($api_respuesta->dato);
+                $array_autos = json_decode($api_respuesta->tabla);
 
                 if ($id != null) {
                     foreach ($array_autos as $auto) {
@@ -435,15 +435,18 @@ class MW
             $token = $request->getHeader("token")[0];
 
             $datos_token = Autentificadora::obtenerPayLoad($token);
-            $usuario_token = $datos_token->payload->data;
-            $perfil_usuario = $usuario_token->perfil;
+            if($datos_token->exito)
+            {
+                $usuario_token = $datos_token->payload->data;
+                $perfil_usuario = $usuario_token->perfil;
+            }
 
             $response = $handler->handle($request);
             $contenidoAPI = (string) $response->getBody();
 
-            if ($perfil_usuario == "encargado") {
+            if ($datos_token->exito && $perfil_usuario == "encargado") {
                 $api_respuesta = json_decode($contenidoAPI);
-                $array_usuarios = json_decode($api_respuesta->dato);
+                $array_usuarios = json_decode($api_respuesta->tabla);
 
                 foreach ($array_usuarios as $usuario) {
                     unset($usuario->id);
@@ -467,16 +470,19 @@ class MW
         if (isset($request->getHeader("token")[0])) {
             $token = $request->getHeader("token")[0];
 
-            $datos_token = Autentificadora::obtenerPayLoad($token);
-            $usuario_token = $datos_token->payload->data;
-            $perfil_usuario = $usuario_token->perfil;
+            $datos_token = Autentificadora::obtenerPayLoad($token); 
+            if($datos_token->exito)
+            {
+                $usuario_token = $datos_token->payload->data;
+                $perfil_usuario = $usuario_token->perfil;
+            }   
 
             $response = $handler->handle($request);
             $contenidoAPI = (string) $response->getBody();
 
-            if ($perfil_usuario == "empleado") {
+            if ($datos_token->exito && $perfil_usuario == "empleado") {
                 $api_respuesta = json_decode($contenidoAPI);
-                $array_usuarios = json_decode($api_respuesta->dato);
+                $array_usuarios = json_decode($api_respuesta->tabla);
 
                 foreach ($array_usuarios as $usuario) {
                     unset($usuario->id);
@@ -504,15 +510,18 @@ class MW
             $token = $request->getHeader("token")[0];
 
             $datos_token = Autentificadora::obtenerPayLoad($token);
-            $usuario_token = $datos_token->payload->data;
-            $perfil_usuario = $usuario_token->perfil;
+            if($datos_token->exito)
+            {
+                $usuario_token = $datos_token->payload->data;
+                $perfil_usuario = $usuario_token->perfil;
+            }
 
             $response = $handler->handle($request);
             $contenidoAPI = (string) $response->getBody();
-
-            if ($perfil_usuario == "propietario") {
+            
+            if ($datos_token->exito && $perfil_usuario == "propietario") {
                 $api_respuesta = json_decode($contenidoAPI);
-                $array_usuarios = json_decode($api_respuesta->dato);
+                $array_usuarios = json_decode($api_respuesta->tabla);
 
                 $apellidosIguales = [];
                 $todosLosApellidos = [];

@@ -26,12 +26,14 @@ $app->get('/', \Usuario::class . ':TraerTodos')
 $app->post("/", \Auto::class . ':AgregarUno')
   ->add(\MW::class . ':VerificarRangoPrecio');
 
-$app->get('/autos', \Auto::class . ':TraerTodos')
-->add(\MW::class . ':ListadoParaEncargado')
-->add(\MW::class . ':ListadoParaEmpleado')
-->add(\MW::class . '::ListadoParaPropietario');
+$app->get('/autos', \Auto::class . ':TraerTodos');
 
-
+$app->group('/autos', function (RouteCollectorProxy $grupo){
+  $grupo->get('/', \Auto::class . ':TraerTodos')
+  ->add(\MW::class . ':ListadoParaEncargado')
+  ->add(\MW::class . ':ListadoParaEmpleado')
+  ->add(\MW::class . '::ListadoParaPropietario');
+});
 
 $app->post("/login", \Usuario::class . ':VerificarUsuario')
   ->add(\MW::class . ':VerificarSiExisteUsuario')
@@ -48,14 +50,8 @@ $app->put("/", \Auto::class . ':ModificarUno')
 ->add(\MW::class . ':VerificarToken')
 ->add(\MW::class . ':VerificarEncargado');
 
-
-// PDF
-$app->get("/pdf", \Usuario::class . ':ListarPdf');
-
 try {
-  //CORRE LA APLICACIÓN.
   $app->run();
 } catch (Exception $e) {
-  // Muestro mensaje de error
   die(json_encode(array("status" => "failed", "message" => "This action is not allowed")));
 }
